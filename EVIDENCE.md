@@ -5,7 +5,7 @@
 | Day | Date | Milestone | Verifiable Evidence (Tx Hash / Explorer / Commit) |
 | :--- | :--- | :--- | :--- |
 | **Day 1** | Tue 17 Nov 2026 | Recon, safe setup, primitive inventory | *[Pending user's 1 tUSD8 transfer tx hash]* |
-| **Day 2** | Wed 18 Nov 2026 | Threat model, architecture & state machine | Completed `SPEC.md` + 15/15 passing spec tests in `tests/spec-validation.test.mjs` |
+| **Day 2** | Wed 18 Nov 2026 | Threat model, architecture & state machine | Completed `SPEC.md` + 15/15 passing spec tests (`commit: 1a1e82a`) |
 | **Day 3** | Thu 19 Nov 2026 | Toolchain and first verified contract | Pending |
 | **Day 4** | Fri 20 Nov 2026 | tUSD8 inside contracts (Vault) | Pending |
 | **Day 5** | Sat 21 Nov 2026 | Smart account foundation | Pending |
