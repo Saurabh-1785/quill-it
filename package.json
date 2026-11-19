@@ -1,0 +1,19 @@
+{
+  "name": "guardian-wallet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guardian Wallet - Smart Account with Guardian Safeguards and AI Sentinel",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "aevum",
+    "smart-account",
+    "guardian",
+    "erc-8004",
+    "security"
+  ],
+  "author": "Saurabh Chauhan",
+  "license": "MIT"
+}
