@@ -6,7 +6,7 @@
 | :--- | :--- | :--- | :--- |
 | **Day 1** | Tue 17 Nov 2026 | Recon, safe setup, primitive inventory | *[Pending user's 1 tUSD8 transfer tx hash]* |
 | **Day 2** | Wed 18 Nov 2026 | Threat model, architecture & state machine | Completed `SPEC.md` + 15/15 passing spec tests (`commit: 1a1e82a`) |
-| **Day 3** | Thu 19 Nov 2026 | Toolchain, Probe contract & deploy script | Hardhat toolchain ready, `Probe.sol` compiled & tested (2/2 passing), deploy script writing to `deployments.json` |
+| **Day 3** | Thu 19 Nov 2026 | Toolchain, Probe contract & deploy script | Hardhat toolchain ready, `Probe.sol` compiled & tested (2/2 passing), deploy script writing to `deployments.json` (`commit: bf3b891`) |
 | **Day 4** | Fri 20 Nov 2026 | tUSD8 inside contracts (Vault) | Pending |
 | **Day 5** | Sat 21 Nov 2026 | Smart account foundation | Pending |
 | **Day 6** | Sun 22 Nov 2026 | Guardian roles and threshold | Pending |
