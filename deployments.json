@@ -1,0 +1,13 @@
+{
+  "hardhat": {
+    "Probe": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "transactionHash": "0x1fb9cc5101f36312582b4144386fd9bd667f9f4390db2a7b5985a744deff6969",
+      "networkTag": "Aevum-Testnet-Day3",
+      "chainId": 31337,
+      "timestamp": "2026-11-20T18:05:39.592Z",
+      "verified": false
+    }
+  }
+}
