@@ -8,6 +8,29 @@
       "chainId": 31337,
       "timestamp": "2026-11-20T18:05:39.592Z",
       "verified": false
+    },
+    "MockTUSD8": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "transactionHash": "0x7eab38fdee4c47098d54721e589efd0832a8d2dbcb5ae693dc9e601e99a174d7",
+      "decimals": 18,
+      "symbol": "tUSD8",
+      "chainId": 31337,
+      "timestamp": "2026-11-21T16:23:42.002Z"
+    },
+    "Vault": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "tokenAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "transactionHash": "0x2893f7a29d579006aa22af2c4c802cf8232da355567a98d0aa151207f109feb5",
+      "chainId": 31337,
+      "timestamp": "2026-11-21T16:23:42.003Z",
+      "verificationActivity": {
+        "depositAmount": "100000000000000000000",
+        "depositTransactionHash": "0xc6a681a541fc685c93a142195455ec64b118464e40872f99ec37c7e1a51ac629",
+        "withdrawAmount": "50000000000000000000",
+        "withdrawTransactionHash": "0x47fb4f45b9edb5a7050aa0dfff7a372519b215dd609b1dae842f567d096c9d85"
+      }
     }
   }
 }
