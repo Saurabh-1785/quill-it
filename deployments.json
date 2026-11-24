@@ -31,6 +31,33 @@
         "withdrawAmount": "50000000000000000000",
         "withdrawTransactionHash": "0x47fb4f45b9edb5a7050aa0dfff7a372519b215dd609b1dae842f567d096c9d85"
       }
+    },
+    "GuardianRegistry": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "removalDelay": 259200,
+      "transactionHash": "0x6c896247392d114798cd87e2e595441b6a9032a46204b9e58fa0ea667ccceed6",
+      "chainId": 31337,
+      "timestamp": "2026-11-24T14:19:30.353Z",
+      "initialGuardians": [
+        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+      ],
+      "threshold": 1
+    },
+    "GuardianAccount": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "guardianRegistry": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "transactionHash": "0xe9c3b8185b6bb64ed94094e251cb79e69dc1aef070242ea335079427d13cf1b3",
+      "chainId": 31337,
+      "timestamp": "2026-11-24T14:19:30.354Z",
+      "verificationActivity": {
+        "fundedAmount": "250000000000000000000",
+        "transferredOutAmount": "75000000000000000000",
+        "recipient": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "outboundTransferTransactionHash": "0x0466af490a231f56d21be6f32b632283286c2e22ebb89048b89221e9f86fd84e",
+        "addGuardianTransactionHash": "0xdf823ee3eed5a64c2ffe07714744bbacf3a91218f0b30afc0a416a89f9b0b453"
+      }
     }
   }
 }

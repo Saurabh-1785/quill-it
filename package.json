@@ -10,7 +10,9 @@
     "deploy:probe:local": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-probe.cjs",
     "deploy:probe:aevum": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-probe.cjs --network aevum",
     "deploy:vault:local": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-vault.cjs",
-    "deploy:vault:aevum": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-vault.cjs --network aevum"
+    "deploy:vault:aevum": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-vault.cjs --network aevum",
+    "deploy:account:local": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-guardian-account.cjs",
+    "deploy:account:aevum": "XDG_CONFIG_HOME=/tmp/.config XDG_CACHE_HOME=/tmp/.cache XDG_DATA_HOME=/tmp/.local/share hardhat run scripts/deploy-guardian-account.cjs --network aevum"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
