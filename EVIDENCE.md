@@ -8,8 +8,8 @@
 | **Day 2** | Wed 18 Nov 2026 | Threat model, architecture & state machine | Completed `SPEC.md` + 15/15 passing spec tests (`commit: 1a1e82a`) |
 | **Day 3** | Thu 19 Nov 2026 | Toolchain, Probe contract & deploy script | Hardhat toolchain ready, `Probe.sol` compiled & tested (2/2 passing), deploy script writing to `deployments.json` (`commit: bf3b891`) |
 | **Day 4** | Fri 20 Nov 2026 | tUSD8 inside contracts (Vault) | Vault.sol & MockTUSD8.sol implemented, SafeERC20 integration, 12/12 unit tests passing, deposit & withdrawal verified (`commit: 7957ce0`) |
-| **Day 5** | Sat 21 Nov 2026 | Smart account foundation | `GuardianAccount.sol` implemented, arbitrary call execution & nonces, account verified as sender of tUSD8 transfer (Tx: `0x0466...84e`), 19/19 unit tests passing |
-| **Day 6** | Sun 22 Nov 2026 | Guardian roles and threshold | `GuardianRegistry.sol` implemented, m-of-n threshold, 72h removal delay, guardian cannot move funds verified, 18/18 unit tests passing (Tx: `0xdf82...453`) |
+| **Day 5** | Sat 21 Nov 2026 | Smart account foundation | `GuardianAccount.sol` implemented, arbitrary call execution & nonces, account verified as sender of tUSD8 transfer (Tx: `0x0466...84e`), 19/19 unit tests passing (`commit: 1032439`) |
+| **Day 6** | Sun 22 Nov 2026 | Guardian roles and threshold | `GuardianRegistry.sol` implemented, m-of-n threshold, 72h removal delay, guardian cannot move funds verified, 18/18 unit tests passing (`commit: 1032439`) |
 | **Day 7** | Mon 23 Nov 2026 | Payee registry and trust tiers | Pending |
 | **Day 8** | Tue 24 Nov 2026 | Spending limits | Pending |
 | **Day 9** | Wed 25 Nov 2026 | Pending queue and time-delay | Pending |
