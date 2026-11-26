@@ -318,4 +318,133 @@ describe("GuardianAccount (Day 5: Smart Account Foundation)", function () {
       expect(await account.guardianRegistry()).to.equal(dummyRegistry);
     });
   });
+
+  describe("Guarded Execution with PayeeRegistry & SpendingLimits (Days 7-8)", function () {
+    let payeeRegistry;
+    let spendingLimits;
+
+    const COOLDOWN_24H = 24 * 3600;
+    const PER_TX_CAP = 100n * ONE_TOKEN;  // 100 tUSD8
+    const DAILY_CAP = 250n * ONE_TOKEN;   // 250 tUSD8
+
+    beforeEach(async function () {
+      const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+      // Deploy PayeeRegistry
+      const PayeeRegistry = await hre.ethers.getContractFactory("PayeeRegistry");
+      payeeRegistry = await PayeeRegistry.deploy(
+        owner.address,
+        await guardianRegistry.getAddress(),
+        COOLDOWN_24H
+      );
+      await payeeRegistry.waitForDeployment();
+
+      // Deploy SpendingLimits
+      const SpendingLimits = await hre.ethers.getContractFactory("SpendingLimits");
+      spendingLimits = await SpendingLimits.deploy(
+        owner.address,
+        await account.getAddress(),
+        PER_TX_CAP,
+        DAILY_CAP
+      );
+      await spendingLimits.waitForDeployment();
+
+      // Link modules to GuardianAccount
+      await account.connect(owner).setPayeeRegistry(await payeeRegistry.getAddress());
+      await account.connect(owner).setSpendingLimits(await spendingLimits.getAddress());
+    });
+
+    it("Should REJECT guarded transfer to unadded or unknown payee", async function () {
+      await expect(
+        account.connect(owner).executeGuardedTransfer(
+          await mockToken.getAddress(),
+          recipient.address,
+          50n * ONE_TOKEN
+        )
+      ).to.be.revertedWithCustomError(account, "PayeeNotTrusted")
+        .withArgs(recipient.address, 0n);
+    });
+
+    it("Should REJECT guarded transfer to payee whose 24h cooldown has NOT yet elapsed", async function () {
+      const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+      // Owner registers recipient as TRUSTED
+      await payeeRegistry.connect(owner).setPayee(recipient.address, 1n); // TRUSTED
+
+      // Immediate spend within cooldown reverts with PayeeNotTrusted (tier UNKNOWN = 0)
+      await expect(
+        account.connect(owner).executeGuardedTransfer(
+          await mockToken.getAddress(),
+          recipient.address,
+          50n * ONE_TOKEN
+        )
+      ).to.be.revertedWithCustomError(account, "PayeeNotTrusted")
+        .withArgs(recipient.address, 0n);
+    });
+
+    it("Should SUCCEED with guarded transfer once payee cooldown has passed and within limits", async function () {
+      const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+      await payeeRegistry.connect(owner).setPayee(recipient.address, 1n);
+      await time.increase(COOLDOWN_24H + 1);
+
+      await expect(
+        account.connect(owner).executeGuardedTransfer(
+          await mockToken.getAddress(),
+          recipient.address,
+          50n * ONE_TOKEN
+        )
+      ).to.emit(mockToken, "Transfer")
+        .withArgs(await account.getAddress(), recipient.address, 50n * ONE_TOKEN);
+
+      expect(await mockToken.balanceOf(recipient.address)).to.equal(50n * ONE_TOKEN);
+    });
+
+    it("Should REJECT guarded transfer exceeding per-transaction limit with ExceedsPerTxLimit", async function () {
+      const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+      await payeeRegistry.connect(owner).setPayee(recipient.address, 1n);
+      await time.increase(COOLDOWN_24H + 1);
+
+      // Attempt 150 tUSD8 (exceeds 100 tUSD8 cap)
+      const excessiveAmount = 150n * ONE_TOKEN;
+      await expect(
+        account.connect(owner).executeGuardedTransfer(
+          await mockToken.getAddress(),
+          recipient.address,
+          excessiveAmount
+        )
+      ).to.be.revertedWithCustomError(spendingLimits, "ExceedsPerTxLimit")
+        .withArgs(excessiveAmount, PER_TX_CAP);
+    });
+
+    it("Should REJECT guarded transfer exceeding daily limit with ExceedsDailyLimit", async function () {
+      const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+      await payeeRegistry.connect(owner).setPayee(recipient.address, 1n);
+      await time.increase(COOLDOWN_24H + 1);
+
+      // Spend 100 + 100 = 200 tUSD8
+      await account.connect(owner).executeGuardedTransfer(
+        await mockToken.getAddress(),
+        recipient.address,
+        100n * ONE_TOKEN
+      );
+      await account.connect(owner).executeGuardedTransfer(
+        await mockToken.getAddress(),
+        recipient.address,
+        100n * ONE_TOKEN
+      );
+
+      // Attempt to spend another 100 tUSD8 (200 + 100 = 300 > 250 daily limit)
+      await expect(
+        account.connect(owner).executeGuardedTransfer(
+          await mockToken.getAddress(),
+          recipient.address,
+          100n * ONE_TOKEN
+        )
+      ).to.be.revertedWithCustomError(spendingLimits, "ExceedsDailyLimit")
+        .withArgs(100n * ONE_TOKEN, 50n * ONE_TOKEN, DAILY_CAP);
+    });
+  });
 });

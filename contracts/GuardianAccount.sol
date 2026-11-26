@@ -5,12 +5,15 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./interfaces/IGuardianRegistry.sol";
+import "./interfaces/IPayeeRegistry.sol";
+import "./interfaces/ISpendingLimits.sol";
 
 /**
  * @title GuardianAccount
  * @notice Owner-controlled smart account foundation with guardian integration,
+ *         payee registry verification, spending limits enforcement,
  *         supporting arbitrary calls, token transfers, nonces, and emergency panic freeze.
- *         Built for Day 5 of the Guardian Wallet 25-Day Build Plan (Aevum Builder Challenge #1).
+ *         Built for Days 5-8 of the Guardian Wallet 25-Day Build Plan (Aevum Builder Challenge #1).
  *
  * Security Architecture:
  * - Owner execution only: only owner can initiate calls or transfer assets.
@@ -18,6 +21,8 @@ import "./interfaces/IGuardianRegistry.sol";
  * - Monotonic nonce: increments on every execution for replay tracking.
  * - Asymmetric panic freeze: can be triggered immediately by the owner OR any active guardian.
  * - Guardian spending block: guardians have zero permission to spend or move funds from this account.
+ * - Payee Registry integration (Day 7): enforces cooldown-validated trust tiers.
+ * - Spending Limits integration (Day 8): enforces per-tx and rolling daily caps with custom errors.
  */
 contract GuardianAccount is ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -29,18 +34,23 @@ contract GuardianAccount is ReentrancyGuard {
     error AccountIsFrozen();
     error ZeroAddress();
     error ExecutionFailed(bytes returnData);
+    error PayeeNotTrusted(address payee, uint256 currentTier);
 
     // --- State Variables ---
     address public owner;
     AccountStatus public status;
     uint256 public nonce;
     IGuardianRegistry public guardianRegistry;
+    IPayeeRegistry public payeeRegistry;
+    ISpendingLimits public spendingLimits;
 
     // --- Events ---
     event ExecutionSuccess(uint256 indexed nonce, address indexed target, uint256 value, bytes data);
     event AccountFrozen(address indexed caller);
     event AccountUnfrozen(address indexed caller);
     event GuardianRegistryUpdated(address indexed newRegistry);
+    event PayeeRegistryUpdated(address indexed newRegistry);
+    event SpendingLimitsUpdated(address indexed newLimits);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event NativeReceived(address indexed sender, uint256 amount);
 
@@ -127,6 +137,42 @@ contract GuardianAccount is ReentrancyGuard {
     }
 
     /**
+     * @notice Executes a guarded transfer of ERC-20 tokens (e.g. tUSD8) enforcing
+     *         payee trust checks (Day 7) and spending limits (Day 8).
+     * @param token ERC-20 token address.
+     * @param to Payee address.
+     * @param amount Transfer amount.
+     */
+    function executeGuardedTransfer(
+        address token,
+        address to,
+        uint256 amount
+    ) external onlyOwner notFrozen nonReentrant returns (bool) {
+        if (token == address(0) || to == address(0)) {
+            revert ZeroAddress();
+        }
+
+        // 1. Payee Registry Check (Day 7: Payee must be effectively TRUSTED)
+        if (address(payeeRegistry) != address(0)) {
+            if (!payeeRegistry.isTrusted(to)) {
+                revert PayeeNotTrusted(to, uint256(payeeRegistry.getEffectiveTier(to)));
+            }
+        }
+
+        // 2. Spending Limits Enforcement (Day 8: perTxLimit & daily rolling cap)
+        if (address(spendingLimits) != address(0)) {
+            spendingLimits.checkAndRecord(amount);
+        }
+
+        uint256 currentNonce = nonce++;
+        IERC20(token).safeTransfer(to, amount);
+
+        bytes memory callData = abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
+        emit ExecutionSuccess(currentNonce, token, 0, callData);
+        return true;
+    }
+
+    /**
      * @notice Emergency panic freeze. Can be triggered by the owner OR any registered guardian.
      */
     function freeze() external {
@@ -158,6 +204,24 @@ contract GuardianAccount is ReentrancyGuard {
     function setGuardianRegistry(address _guardianRegistry) external onlyOwner {
         guardianRegistry = IGuardianRegistry(_guardianRegistry);
         emit GuardianRegistryUpdated(_guardianRegistry);
+    }
+
+    /**
+     * @notice Link or update the payee registry.
+     * @param _payeeRegistry Address of new payee registry.
+     */
+    function setPayeeRegistry(address _payeeRegistry) external onlyOwner {
+        payeeRegistry = IPayeeRegistry(_payeeRegistry);
+        emit PayeeRegistryUpdated(_payeeRegistry);
+    }
+
+    /**
+     * @notice Link or update the spending limits module.
+     * @param _spendingLimits Address of new spending limits module.
+     */
+    function setSpendingLimits(address _spendingLimits) external onlyOwner {
+        spendingLimits = ISpendingLimits(_spendingLimits);
+        emit SpendingLimitsUpdated(_spendingLimits);
     }
 
     /**
